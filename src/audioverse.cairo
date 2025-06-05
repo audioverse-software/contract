@@ -10,17 +10,27 @@ mod AudioVerse {
     };
     use crate::base::errors::Errors::{SAMPLE_BODY_EMPTY, SAMPLE_NOT_FOUND};
     use crate::base::types::Sample;
-    use crate::interfaces::IERC20::{IERC20Dispatcher, IERC20DispatcherTrait};
+    // use crate::interfaces::IERC20::{IERC20Dispatcher, IERC20DispatcherTrait};
+
+    use audioverse::royalty::component::royalty_component::Royalty;
+    use audioverse::royalty::component::royalty_component::Royalty::RoyaltyImpl;
+
+    component!(path: Royalty, storage: royalty, event: RoyaltyEvent);
+
 
     #[storage]
     struct Storage {
         samples: Map<u256, Sample>,
         sample_count: u256,
+        #[substorage(v0)]
+        royalty: Royalty::Storage,
     }
     #[event]
     #[derive(Drop, starknet::Event)]
-    enum Event {
+    pub enum Event {
         SampleEvent: SampleEvent,
+        #[flat]
+        RoyaltyEvent: Royalty::Event,
     }
 
     #[derive(Drop, starknet::Event)]
